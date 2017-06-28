@@ -1,5 +1,8 @@
 package byAJ.Securex.configs;
 
+import byAJ.Securex.models.SSUserDetailsService;
+import byAJ.Securex.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -35,9 +38,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("password").roles("USER");
-        auth.inMemoryAuthentication().withUser("dave").password("begreat").roles("USER");
-        auth.inMemoryAuthentication().withUser("fi").password("becold").roles("USER");
-        auth.inMemoryAuthentication().withUser("root").password("pass").roles("ADMIN");
+        auth.userDetailsService(userDetailsServiceBean());
+    }
+    @Autowired private UserRepository userRepository;
+    @Override
+    public UserDetailsService userDetailsServiceBean() throws Exception {
+        return new SSUserDetailsService(userRepository);
     }
 }
